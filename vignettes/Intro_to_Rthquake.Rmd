@@ -1,0 +1,108 @@
+---
+title: "Introduction to Rthquake"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Rthquake is a package developed for the processing and visualization of earthquake data from the NOAA Significant Earthquake Database. 
+
+## Installation
+
+
+You can install and load the released version of Rthquake with:
+
+```{r eval=FALSE}
+devtools::install_github('Paul-Draper/Rthquake', build_vignettes = TRUE)
+library(Rthquake)
+```
+
+```{r include=FALSE}
+library(magrittr)
+library(ggplot2)
+library(dplyr)
+```
+
+## Import Data
+
+The complete NOAA Significant Earthquake dataset is included in the Rthquake package. Load it with
+
+```{r echo=T, message=FALSE, warning=FALSE, results='hide'}
+library(Rthquake)
+
+system.file("extdata", "NOAA_data.txt", package="Rthquake") %>% 
+  readr::read_delim(delim = "\t")
+```
+
+## Cleaning the Data
+
+The earthquake data can be prepared for further processing using two functions: `eq_clean_data` and `eq_location_clean`. We first load the raw data, and then clean it:
+
+```{r echo=T, message=FALSE, warning=FALSE, results='hide'}
+earthquakes <- system.file("extdata", "NOAA_data.txt", package="Rthquake") %>% 
+  readr::read_delim(delim = "\t")
+
+earthquakes %>% 
+  eq_clean_data() %>% 
+  eq_location_clean()
+```
+
+## Earthquake Timeline Visualization
+
+The package includes two geoms for visualizing earthquake data. The first, `geom_timeline`, generates a timeline plot of earthquakes for each country in the dataset. The size of the marker is proportional to the size of the earthquake, and the colour indicates the number of deaths.
+
+The second, `geom_timeline_label`, labels the `n_max` largest earthquakes from each country.
+
+For instance, the following example displays the earthquakes in USA, China, and Afghanistan from the year 2000 onwards, labelling the location of the five largest earthquakes in each country.
+
+```{r fig.width=10, fig.height=8}
+earthquakes %>% 
+  eq_clean_data() %>% 
+  eq_location_clean() %>% 
+  filter(COUNTRY %in% c("USA", "CHINA", "AFGHANISTAN")) %>%
+  filter(DATE > "2000-01-01") %>%
+  ggplot() +
+   geom_timeline(aes(x = DATE, 
+                     y = COUNTRY, 
+                     color = TOTAL_DEATHS, 
+                     size = EQ_PRIMARY, 
+                     scaling_factor = 1
+                     )
+                 ) +
+   geom_timeline_label(aes(x = DATE, 
+                           y = COUNTRY, 
+                           label = LOCATION_NAME, 
+                           magnitude = EQ_PRIMARY, 
+                           n_max = 5
+                           )
+                       ) +
+   theme_bw() +
+   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+   scale_size_continuous(name = 'Richter scale value') +
+   scale_color_continuous(name = '# of Deaths')
+```
+
+## Earthquake Map
+
+The package also contains two geoms for generating an interactive map of earthquake data. The first, `eq_map`, generates a leaflet map showing earthquake locations. The second, `eq_create_label`, generates a label for each earthquake to display its location, size, and the associated number of deaths.
+
+The following example displays earthquakes in Mexico from the year 2000 onwards.
+
+```{r fig.width=10, fig.height=8}
+earthquakes %>% 
+  eq_clean_data() %>% 
+  filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>% 
+  mutate(popup_text = eq_create_label(.)) %>% 
+  eq_map(annot_col = "popup_text")
+```
+

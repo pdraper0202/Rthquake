@@ -1,0 +1,18 @@
+Package: Rthquake
+Type: Package
+Title: Visualization of Earthquake Data
+Version: 0.1.0
+Author: Paul Draper
+Maintainer: Paul Draper <draper.vai@gmail.com>
+Description: A package used for the analysis and visualization of data from the 
+    NOAA Significant Earthquakes dataset.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
+BuildVignettes: yes
