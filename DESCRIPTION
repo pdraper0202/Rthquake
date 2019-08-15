@@ -14,7 +14,10 @@ Suggests:
     dplyr,
     knitr,
     ggplot2,
+    leaflet,
     lubridate,
+    magrittr,
+    purrrlyr,
     rmarkdown,
     stringr,
     testthat
