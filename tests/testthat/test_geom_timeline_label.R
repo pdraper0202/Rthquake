@@ -1,7 +1,11 @@
+context("Test geom_timeline_label")
+
 earthquakes <- system.file("extdata", "NOAA_data.txt", package="Rthquake") %>%
   readr::read_delim(delim = "\t")
 
 test_that("Result is a ggplot", {
+  library(ggplot2)
+
   DF <- earthquakes %>%
     eq_clean_data() %>%
     eq_location_clean() %>%

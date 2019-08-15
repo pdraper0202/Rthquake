@@ -1,3 +1,5 @@
+context("Test eq_create_label")
+
 earthquakes <- system.file("extdata", "NOAA_data.txt", package="Rthquake") %>%
   readr::read_delim(delim = "\t")
 
