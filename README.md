@@ -15,7 +15,7 @@ Installation
 You can install and load the released version of Rthquake with:
 
 ``` r
-devtools::install_github('Paul-Draper/Rthquake', build_vignettes = TRUE)
+devtools::install_github('pdraper0202/Rthquake', build_vignettes = TRUE)
 library(Rthquake)
 ```
 
